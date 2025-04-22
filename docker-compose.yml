@@ -1,0 +1,26 @@
+version: '3.8' # Especifica la versión de la sintaxis de Compose
+
+services:
+  # Nombre del servicio (podemos llamarlo 'db' o 'postgres')
+  db:
+    # Usaremos la imagen oficial de PostgreSQL, versión 15
+    image: postgres:15
+    # Reiniciar siempre el contenedor si se detiene (útil en desarrollo)
+    restart: always
+    # Variables de entorno para configurar PostgreSQL
+    environment:
+      POSTGRES_USER: user_ecomarket # Nombre de usuario para la BD
+      POSTGRES_PASSWORD: password_ecomarket # CONTRASEÑA SOLO PARA DESARROLLO LOCAL
+      POSTGRES_DB: db_ecomarket # Nombre de la base de datos
+    # Mapeo de puertos: expone el puerto 5432 del contenedor
+    # al puerto 5432 de tu máquina local (localhost)
+    ports:
+      - "5432:5432"
+    # Volumen para persistir los datos de la BD
+    # incluso si el contenedor se elimina y se vuelve a crear
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# Definición del volumen nombrado que usamos arriba
+volumes:
+  postgres_data: {}

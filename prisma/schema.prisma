@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+// Modelo para las Categorías de Productos
+model Category {
+  id          Int       @id @default(autoincrement()) // ID único, autoincrementable
+  name        String    @unique // Nombre único de la categoría (ej: "Frutas", "Verduras")
+  description String?   // Descripción opcional de la categoría
+  products    Product[] // Relación: Una categoría puede tener muchos productos
+  createdAt   DateTime  @default(now()) // Fecha de creación (automática)
+  updatedAt   DateTime  @updatedAt // Fecha de última actualización (automática)
+
+  @@map("categories") // Mapea este modelo a la tabla 'categories' en la BD
+}
+
+// Modelo para los Productos
+// Modelo para los Productos
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String   // Asegúrate si este campo debe ser opcional (String?) o no
+  price       Decimal  @db.Decimal(10, 2) // Especificar precisión es bueno
+  sku         String   @unique
+  imageUrl    String?
+  stock       Int      @default(0)
+  published   Boolean  @default(false) // <-- ¡AÑADE ESTA LÍNEA!
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // --- Relación con Category ---
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade) // Añadir onDelete puede ser útil
+
+  @@map("products")
+}
+// Modelo para los Mensajes de Contacto
+model ContactMessage {
+  id        Int      @id @default(autoincrement()) // ID único
+  name      String   // Nombre de quien envía
+  email     String   // Email de quien envía
+  subject   String?  // Asunto (opcional)
+  message   String   // Contenido del mensaje
+  isRead    Boolean  @default(false) // Para marcar si ya fue leído por el admin
+  createdAt DateTime @default(now()) // Fecha de recepción
+
+  @@map("contact_messages") // Mapea a la tabla 'contact_messages'
+}
